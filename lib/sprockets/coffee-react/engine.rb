@@ -15,10 +15,10 @@ if defined?(Rails)
         end
 
         def configure_env(env)
+          env.register_mime_type 'text/cjsx', extensions: ['.cjsx', '.js.cjsx'], charset: :unicode
           env.register_preprocessor 'application/javascript', Sprockets::CoffeeReact
           env.register_postprocessor 'application/javascript', Sprockets::CoffeeReactPostprocessor
-          env.register_engine '.cjsx', Sprockets::CoffeeReactScript
-          env.register_engine '.js.cjsx', Sprockets::CoffeeReactScript
+          env.register_preprocessor 'text/cjsx', Sprockets::CoffeeReactScript
         end
       end
     end

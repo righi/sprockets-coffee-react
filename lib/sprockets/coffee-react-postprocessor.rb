@@ -1,15 +1,11 @@
 require 'sprockets'
-require 'tilt'
 require 'coffee-react'
 
 module Sprockets
-  class CoffeeReactPostprocessor < Tilt::Template
+  class CoffeeReactPostprocessor
 
-    def prepare
-    end
-
-    def evaluate(scope, locals, &block)
-      ::CoffeeReact.jstransform(data)
+    def self.call(input)
+      ::CoffeeReact.jstransform(input[:data])
     end
   end
 end

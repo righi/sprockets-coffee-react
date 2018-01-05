@@ -1,5 +1,4 @@
 require 'sprockets'
-require 'tilt'
 require 'coffee-react'
 require 'sprockets/coffee-react-postprocessor'
 
@@ -9,22 +8,23 @@ module Sprockets
     CJSX_EXTENSION = /\.(:?cjsx|coffee)[^\/]*?$/
     CJSX_PRAGMA = /^\s*#[ \t]*@cjsx/i
 
-    def prepare
-    end
+    def self.call(input)
+      filename = input[:filename]
+      source   = input[:data]
+      context  = input[:environment].context_class.new(input)
 
-    def evaluate(scope, locals, &block)
-      if scope.pathname.to_s =~ CJSX_EXTENSION || data =~ CJSX_PRAGMA
-        ::CoffeeReact.transform(data)
+      if filename =~ CJSX_EXTENSION || source =~ CJSX_PRAGMA
+        ::CoffeeReact.transform(source)
       else
-        data
+        source
       end
     end
 
     def self.install(environment = ::Sprockets)
+      environment.register_mime_type 'text/cjsx', extensions: ['.cjsx', '.js.cjsx'], charset: :unicode
       environment.register_preprocessor 'application/javascript', Sprockets::CoffeeReact
       environment.register_postprocessor 'application/javascript', Sprockets::CoffeeReactPostprocessor
-      environment.register_engine '.cjsx', Sprockets::CoffeeReactScript
-      environment.register_engine '.js.cjsx', Sprockets::CoffeeReactScript
+      environment.register_preprocessor 'text/cjsx', Sprockets::CoffeeReactScript
     end
   end
 end
